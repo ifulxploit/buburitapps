@@ -7,33 +7,21 @@ export default async function handler(req, res) {
   let year = slug[1];
   let month = slug[2];
 
-  if (req.method !== "GET")
+  if (req.method !== "GET") {
     return res.status(405).json({
       code: 405,
       status: "error",
       result: "Method Not Allowed",
     });
+  }
 
-  if (!city)
-    return res.status(404).json({
-      code: 404,
+  if (!city || !year || !month) {
+    return res.status(400).json({
+      code: 400,
       status: "error",
-      result: "city is required",
+      result: "city, year, and month are required",
     });
-
-  if (!year)
-    return res.status(404).json({
-      code: 404,
-      status: "error",
-      result: "year is required",
-    });
-
-  if (!month)
-    return res.status(404).json({
-      code: 404,
-      status: "error",
-      result: "month is required",
-    });
+  }
 
   try {
     const { data } = await axios(
@@ -42,7 +30,7 @@ export default async function handler(req, res) {
 
     const { jadwal } = data.data;
 
-    res.status(200).json({
+    return res.status(200).json({
       code: 200,
       status: "OK",
       result: jadwal,
